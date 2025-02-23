@@ -1,41 +1,29 @@
 import numpy as np
-from scipy.stats import norm
+from scipy.stats import norm  # Import for correct z-score calculation
 
-class SignalDetection:  # used ZotGPT to make structure of class
-    def __init__(self, hits, misses, false_alarms, correct_rejections): 
+class SignalDetection: # written using chatGPT
+    def __init__(self, hits, misses, false_alarms, correct_rejections):
         self.hits = hits
         self.misses = misses
         self.false_alarms = false_alarms
         self.correct_rejections = correct_rejections
-        
+
     def hit_rate(self):
-        return self.hits / (self.hits + self.misses)
+        total_signal = self.hits + self.misses
+        return self.hits / total_signal if total_signal > 0 else 0.5  # Prevent division by zero
 
     def false_alarm_rate(self):
-        return self.false_alarms / (self.false_alarms + self.correct_rejections) 
-    
-    def d_prime(self): # used ZotGPT to write this function
-        hit_rate = self.hit_rate()
-        fa_rate = self.false_alarm_rate()
-        
-        # Handle edge cases
-        hit_rate = np.clip(hit_rate, 0.00001, 0.99999)
-        fa_rate = np.clip(fa_rate, 0.00001, 0.99999)
-        
-        z_hit = norm.ppf(hit_rate)
-        z_fa = norm.ppf(fa_rate)
-        
-        return z_hit - z_fa
-    
-    def criterion(self): # used ZotGPT to write this function
-        hit_rate = self.hit_rate()
-        fa_rate = self.false_alarm_rate()
-        
-        # Handle edge cases
-        hit_rate = np.clip(hit_rate, 0.00001, 0.99999)
-        fa_rate = np.clip(fa_rate, 0.00001, 0.99999)
-        
-        z_hit = norm.ppf(hit_rate)
-        z_fa = norm.ppf(fa_rate)
-        
-        return -0.5 * (z_hit + z_fa)
+        total_noise = self.false_alarms + self.correct_rejections
+        return self.false_alarms / total_noise if total_noise > 0 else 0.5  # Prevent division by zero
+
+    def d_prime(self):
+        return self.z_score(self.hit_rate()) - self.z_score(self.false_alarm_rate())
+
+    def criterion(self):
+        return -0.5 * (self.z_score(self.hit_rate()) + self.z_score(self.false_alarm_rate()))
+
+    @staticmethod
+    def z_score(rate):
+        # Ensure rate is within valid range to avoid math errors
+        rate = np.clip(rate, 1e-6, 1 - 1e-6)
+        return norm.ppf(rate)  # Correct way to compute z-score
