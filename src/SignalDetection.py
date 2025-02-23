@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.stats import norm  # Import for correct z-score calculation
 
-class SignalDetection:
+class SignalDetection: # written using chatGPT
     def __init__(self, hits, misses, false_alarms, correct_rejections):
         self.hits = hits
         self.misses = misses

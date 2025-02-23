@@ -2,7 +2,7 @@ import unittest
 from Experiment import Experiment
 from SignalDetection import SignalDetection
 
-class TestExperiment(unittest.TestCase):
+class TestExperiment(unittest.TestCase): # written using chatGPT
 
     def setUp(self):
         self.exp = Experiment()

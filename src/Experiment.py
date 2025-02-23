@@ -1,7 +1,7 @@
 import numpy as np
 from SignalDetection import SignalDetection
 
-class Experiment:
+class Experiment: # written using chatGPT
     def __init__(self):
         self.conditions = []
         self.labels = []
